@@ -18,22 +18,18 @@
   </select>
 
   <script>
-    async function carregarClassificacoes() {
-      try {
-        const resposta = await fetch('https://script.google.com/macros/s/AKfycbw4qv3i6u8MktNcH0WqiGoJwuRGCr3Cd38RpbUJqZvE3D2CfZPCfpFtsqRNpbIF0a24/exec?func=classificacoes');
-        const classificacoes = await resposta.json();
-
-        const select = document.getElementById('classificacao');
-        classificacoes.forEach(classe => {
-          const opt = document.createElement('option');
-          opt.value = classe;
-          opt.textContent = classe;
-          select.appendChild(opt);
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch('https://script.google.com/macros/s/AKfycbwCAY6ovrkvudAe9yOZjUpgqRZD94lflkiVCkRhoRsleG8AFwHvijPEn7EPyasxE0Xl/exec?func=obterClassificacoes')
+      .then(response => response.json())
+      .then(classificacoes => {
+        const select = document.getElementById("classificacao");
+        classificacoes.forEach(item => {
+          const option = document.createElement("option");
+          option.value = item;
+          option.textContent = item;
+          select.appendChild(option);
         });
-      } catch (erro) {
-        console.error('Erro ao carregar classificações:', erro);
-      }
-    }
-
-    carregarClassificacoes();
-  </script>
+      })
+      .catch(error => console.error("Erro ao carregar classificações:", error));
+  });
+</script>
