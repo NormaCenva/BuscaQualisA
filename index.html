@@ -1,128 +1,39 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <base target="_top">
-    <style>
-      body {
-        font-family: "Segoe UI", sans-serif;
-        background-color: #f9f9fb;
-        padding: 30px;
-        color: #333;
-      }
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Busca Qualis A</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    label { display: block; margin-top: 10px; }
+    select, input { width: 300px; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Consulta Qualis</h1>
 
-      h2 {
-        color: #2c3e50;
-        margin-bottom: 20px;
-      }
+  <label for="classificacao">Classificação:</label>
+  <select id="classificacao">
+    <option value="">(Todas)</option>
+  </select>
 
-      label {
-        display: block;
-        margin-top: 12px;
-        font-weight: bold;
-      }
+  <script>
+    async function carregarClassificacoes() {
+      try {
+        const resposta = await fetch('https://script.google.com/macros/s/AKfycbw4qv3i6u8MktNcH0WqiGoJwuRGCr3Cd38RpbUJqZvE3D2CfZPCfpFtsqRNpbIF0a24/exec?func=classificacoes');
+        const classificacoes = await resposta.json();
 
-      input, select {
-        width: 250px;
-        padding: 6px;
-        margin-top: 4px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-
-      button {
-        background-color: #1e88e5;
-        color: white;
-        padding: 8px 16px;
-        border: none;
-        margin-top: 20px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-      }
-
-      button:hover {
-        background-color: #1565c0;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 30px;
-      }
-
-      th, td {
-        border: 1px solid #ccc;
-        padding: 10px;
-        text-align: left;
-      }
-
-      th {
-        background-color: #e3f2fd;
-      }
-    </style>
-  </head>
-  <body>
-    <h2>Consulta de Disciplinas / Revistas</h2>
-
-    <label>ISSN:</label>
-    <input type="text" id="issn"><br>
-
-    <label>Área:</label>
-    <input type="text" id="area"><br>
-
-    <label>Classificação:</label>
-    <select id="classificacao">
-      <option value="">(Todas)</option>
-    </select><br>
-
-    <label>Área mãe:</label>
-    <input type="text" id="areaMae"><br>
-
-    <button onclick="buscar()">🔍 Buscar</button>
-
-    <div id="resultados"></div>
-
-    <script>
-      function buscar() {
-        const filtros = {
-          issn: document.getElementById("issn").value.toLowerCase(),
-          area: document.getElementById("area").value.toLowerCase(),
-          classificacao: document.getElementById("classificacao").value.toLowerCase(),
-          areaMae: document.getElementById("areaMae").value.toLowerCase(),
-        };
-
-        google.script.run.withSuccessHandler(function(res) {
-          let html = "";
-          if (res.length === 0) {
-            html = "<p><strong>Nenhum resultado encontrado.</strong></p>";
-          } else {
-            html = "<table><tr><th>ISSN</th><th>Título</th><th>Área</th><th>Classificação</th><th>Área mãe</th><th>Link</th></tr>";
-            res.forEach(r => {
-              html += `<tr>
-                <td>${r[0]}</td>
-                <td>${r[1]}</td>
-                <td>${r[2]}</td>
-                <td>${r[3]}</td>
-                <td>${r[4]}</td>
-                <td>${r[5] ? `<a href="${r[5]}" target="_blank">Acessar</a>` : "Sem link"}</td>
-              </tr>`;
-            });
-            html += "</table>";
-          }
-          document.getElementById("resultados").innerHTML = html;
-        }).buscarDados(filtros);
-      }
-
-      // Preenche o dropdown de Classificação ao carregar a página
-      google.script.run.withSuccessHandler(function(opcoes) {
-        const select = document.getElementById("classificacao");
-        opcoes.forEach(opcao => {
-          const opt = document.createElement("option");
-          opt.value = opcao;
-          opt.text = opcao;
-          select.add(opt);
+        const select = document.getElementById('classificacao');
+        classificacoes.forEach(classe => {
+          const opt = document.createElement('option');
+          opt.value = classe;
+          opt.textContent = classe;
+          select.appendChild(opt);
         });
-      }).obterClassificacoes();
-    </script>
-  </body>
-</html>
+      } catch (erro) {
+        console.error('Erro ao carregar classificações:', erro);
+      }
+    }
+
+    carregarClassificacoes();
+  </script>
